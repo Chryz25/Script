@@ -1,0 +1,42 @@
+Phase 1 — Install msmtp
+sudo apt update
+sudo apt install msmtp msmtp-mta ca-certificates -y
+msmtp --version
+
+
+Phase 2 — Generate Gmail App Password
+Go to → myaccount.google.com
+Click Security on the left
+Enable 2-Step Verification if not yet on
+Search for App Passwords at the top search bar
+Click Create → name it msmtp-linux
+Copy the 16-character password — remove all spaces before using it
+
+
+Phase 3 — Create msmtp Config
+nano ~/.msmtprc
+# ── Default settings for all accounts ──
+defaults
+auth           on
+tls            on
+tls_trust_file /etc/ssl/certs/ca-certificates.crt
+logfile        ~/.msmtp.log
+
+# ── Gmail account ──
+account        gmail
+host           smtp.gmail.com
+port           587
+from           youremail@gmail.com
+user           youremail@gmail.com
+password       your16charapppassword
+
+# ── Set gmail as default ──
+account default : gmail
+
+
+Phase 4 — Secure the Config File
+chmod 600 ~/.msmtprc
+
+
+Phase 5 — Test msmtp Connection
+echo -e "Subject: msmtp Live Test\n\nThis was sent from msmtp on Linux." | msmtp recipient@example.com
